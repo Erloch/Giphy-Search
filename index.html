@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Giphy Picks</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+    <div id="buttons"></div>
+
+    <div>
+        <form>
+            <span><input id="searchBar" type="text"><input id="sBtn" value="Search" type="submit"></span>
+        </form>
+    </div>
+    <div id="images">
+        <!-- <img src="https://media1.giphy.com/media/3o85xkQpyMlnBkpB9C/200_s.gif"
+            data-still="https://media1.giphy.com/media/3o85xkQpyMlnBkpB9C/200_s.gif"
+            data-animate="https://media1.giphy.com/media/3o85xkQpyMlnBkpB9C/200.gif" data-state="still" class="gif"> -->
+
+    </div>
+
+    <script type="text/javascript">
+
+        var topics = ["sports", "football", "soccer", "baseball", "basketball"]
+
+
+
+        // $.ajax({
+        //     url: queryURL,
+        //     method: "GET"
+        // }).then(function (response) {
+        //     console.log(response)
+
+        // });
+        //     // =============================================
+
+
+
+        for (var i = 0; i < topics.length; i++) {//buttons for array
+            var topBtn = $("#buttons").append("<button class = 'myBtn'>" + topics[i] + "</button>");
+            // $("").append(topBtn);
+        };
+
+        $("#buttons").on("click", "button", function () {// call to my jquery
+
+            var query = $(this).text();
+            // console.log(query)
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + query + "&rating=g&limit=10&lang=en&api_key=BkaUZZWcFij6J7AoQj3WtPb1R2p9O6V9";
+
+            // var gifImage = ("<img>").attr("src" + query)
+            // //jquery will go in here
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).then(function (response) {
+                // console.log(response)
+                var results = response.data
+                for (var i = 0; i < results.length; i++) {
+                    var gifImage = $("<img class = 'img'>");
+                    gifImage.attr("src", results[i].images.fixed_height_still.url);
+                    gifImage.attr("data-state", "still").attr("data-animate", results[i].images.fixed_height.url).attr("data-still", results[i].images.fixed_height_still.url);
+                    var newDiv = $("<div>");
+                    var p = $("<p>").text("Rating: " + results[i].rating);
+                    newDiv.append(gifImage, p);
+                    $("#images").prepend(newDiv);
+
+                }
+            });
+
+            // $(query )
+
+        });
+        $("#images").on("click", "img",function () {
+            
+            console.log(this);
+            var state = $(this).attr("data-state");
+            var still = $(this).attr("data-still");
+            var animate = $(this).attr("data-animate");
+            if (state === "still") {
+                $(this).attr("src", animate);
+                $(this).attr("data-state", "animate");
+
+            }
+            else if (state === "animate") {
+                $(this).attr("src", still);
+                $(this).attr("data-state", "still")
+            }
+        });
+        $("#sBtn").on("click", function (event) {//button creator for search
+            event.preventDefault();
+            
+            var search = $("#searchBar").val().trim();
+            // console.log(search);
+            $("#buttons").append("<button class = 'myBtn'>" + search + "</button>");
+            $("#searchBar").empty()
+        });
+
+
+
+
+
+
+
+        // "https://api.giphy.com/v1/gifs/" + search + "?&q=&limit=10&rating=G&lang=en&api_key=c7eWXbcrGdrLRriLetxX1wT0bl6hscT1"
+    </script>
+</body>
+
+</html>
